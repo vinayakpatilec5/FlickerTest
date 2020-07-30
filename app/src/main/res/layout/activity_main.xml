@@ -43,8 +43,8 @@
         android:id="@+id/loader"/>
     <com.example.dunzotest.ui.common.LoadingWidget
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginBottom="@dimen/list_top_padding"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/bottom_small_padding"
         android:visibility="gone"
         android:layout_alignParentBottom="true"
         android:id="@+id/bottom_loader"/>
