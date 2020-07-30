@@ -108,6 +108,7 @@ class MainViewModel @Inject constructor(application: Application,var repo: Photo
     fun setSearchTextListener(){
         if(!searchEditText.hasObservers()) {
             disp.add(searchEditText.debounce(500, TimeUnit.MILLISECONDS)
+                .distinctUntilChanged()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
