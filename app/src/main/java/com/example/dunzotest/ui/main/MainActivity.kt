@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dunzotest.ui.main.adapter.PhotoAdapter
 import com.example.dunzotest.R
-import com.example.dunzotest.ServiceGenerator
+import com.example.dunzotest.model.Photo
 import com.example.dunzotest.ui.common.LoadingWidget
 import com.example.dunzotest.util.CustomApplication
 import com.example.dunzotest.util.ViewModelFactory
@@ -36,15 +36,15 @@ class MainActivity : AppCompatActivity(),TextWatcher,LoadingWidget.Callback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        ServiceGenerator.initClient(this)
         (application as CustomApplication).component.inject(this)
         mainViewModel = ViewModelProviders.of(this,viewModelFactory).get(MainViewModel::class.java)
         initView()
         setUpRecyclerView()
         setListeners()
         loadData()
-
     }
+
+
 
     fun initView(){
         recyclerView = findViewById(R.id.recycler_view)
@@ -58,11 +58,7 @@ class MainActivity : AppCompatActivity(),TextWatcher,LoadingWidget.Callback {
     fun setListeners(){
         editText.addTextChangedListener(this)
         paginationLoader.callback = this
-    }
 
-
-    fun loadData(){
-        mainViewModel.loadInitData("")
         mainViewModel.photoList.observe(this, Observer {
             errorText.visibility = View.GONE
             paginationLoader.hideLoading()
@@ -88,14 +84,25 @@ class MainActivity : AppCompatActivity(),TextWatcher,LoadingWidget.Callback {
         })
 
         mainViewModel.error.observe(this, Observer {
-                errorText.visibility = View.VISIBLE
-                errorText.text = it
+            errorText.visibility = View.VISIBLE
+            errorText.text = it
 
         })
 
         mainViewModel.paginationError.observe(this, Observer {
             paginationLoader.setRetryMessage(it)
         })
+    }
+
+
+    fun loadData(){
+        if(mainViewModel.allPhotoList.size>0){
+            errorText.visibility = View.GONE
+            paginationLoader.hideLoading()
+            adapter.setData(mainViewModel.allPhotoList)
+        }else {
+            mainViewModel.loadInitData("")
+        }
     }
 
 
