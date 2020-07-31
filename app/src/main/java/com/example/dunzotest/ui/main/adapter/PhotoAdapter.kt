@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.dunzotest.R
-import com.example.dunzotest.model.Photo
+import com.example.dunzotest.model.photo.Photo
 import kotlinx.android.synthetic.main.item_photo.view.*
 
 class PhotoAdapter: RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder>() {

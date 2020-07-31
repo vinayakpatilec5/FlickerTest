@@ -1,6 +1,6 @@
-package com.example.dunzotest.model
+package com.example.dunzotest.model.photo
 
-import com.example.dunzotest.model.Photo
+import com.example.dunzotest.model.photo.Photo
 import com.google.gson.annotations.SerializedName
 
 class PhotoData {

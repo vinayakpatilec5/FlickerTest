@@ -15,7 +15,7 @@ import javax.inject.Singleton
 @Module
 class NetworkModule {
     @Provides
-    fun getBaseUrl():String {
+    fun getBaseUrl(): String {
         return BuildConfig.BASE_URL
     }
 
@@ -26,10 +26,10 @@ class NetworkModule {
             var url = request.url()
             var newUrl = url.newBuilder()
                 .addQueryParameter("api_key", BuildConfig.FLICKER_API_KEY)
-                .addQueryParameter("method","flickr.photos.search")
-                .addQueryParameter("format","json")
-                .addQueryParameter("per_page","10")
-                .addQueryParameter("nojsoncallback","1").build()
+                .addQueryParameter("method", "flickr.photos.search")
+                .addQueryParameter("format", "json")
+                .addQueryParameter("per_page", "10")
+                .addQueryParameter("nojsoncallback", "1").build()
             var newRequest = request.newBuilder().url(newUrl).build()
             chain.proceed(newRequest)
         }
@@ -46,8 +46,8 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient?,baseUrl: String): Retrofit? {
-        return   Retrofit.Builder().baseUrl(baseUrl)
+    fun provideRetrofit(okHttpClient: OkHttpClient?, baseUrl: String): Retrofit? {
+        return Retrofit.Builder().baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .client(okHttpClient)
@@ -55,7 +55,7 @@ class NetworkModule {
     }
 
     @Provides
-    fun provideApi(retrofit: Retrofit?):PhotoApi{
+    fun provideApi(retrofit: Retrofit?): PhotoApi {
         return retrofit?.create(PhotoApi::class.java)!!
     }
 }

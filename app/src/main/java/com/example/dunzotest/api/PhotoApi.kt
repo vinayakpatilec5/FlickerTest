@@ -1,6 +1,6 @@
 package com.example.dunzotest.api
 
-import com.example.dunzotest.model.PhotoResponse
+import com.example.dunzotest.model.photo.PhotoResponse
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Query

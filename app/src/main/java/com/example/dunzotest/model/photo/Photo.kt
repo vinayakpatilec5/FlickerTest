@@ -1,4 +1,4 @@
-package com.example.dunzotest.model
+package com.example.dunzotest.model.photo
 
 import com.google.gson.annotations.SerializedName
 

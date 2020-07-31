@@ -1,7 +1,7 @@
 package com.example.dunzotest.di
 
 import androidx.lifecycle.ViewModel
-import com.example.dunzotest.ui.main.MainViewModel
+import com.example.dunzotest.ui.main.PhotoListViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -10,6 +10,6 @@ import dagger.multibindings.IntoMap
 abstract class MainModule {
     @Binds
     @IntoMap
-    @ViewModelKey(MainViewModel::class)
-    abstract fun bindMainViewModel(mainViewModel: MainViewModel): ViewModel
+    @ViewModelKey(PhotoListViewModel::class)
+    abstract fun bindMainViewModel(mainViewModel: PhotoListViewModel): ViewModel
 }
