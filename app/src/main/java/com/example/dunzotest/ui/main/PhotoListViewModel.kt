@@ -19,19 +19,24 @@ import javax.inject.Inject
 
 class PhotoListViewModel @Inject constructor(
     application: Application,
-    var photoListRepository: PhotoListRepository) :
+    var photoListRepository: PhotoListRepository
+) :
     AndroidViewModel(application) {
-    //    var repo: Api
+
+
     var pageNo = 0
     var allPhotoList = ArrayList<Photo>()
     var paginationDone: Boolean = false
-
 
     var stateLiveData: MutableLiveData<UserListState> = MutableLiveData<UserListState>()
 
     var searchText: String = ""
     var disp: CompositeDisposable = CompositeDisposable()
     val searchEditText = PublishSubject.create<String>()
+
+    init {
+        setSearchTextListener()
+    }
 
     fun resetList() {
         pageNo = 0
@@ -95,39 +100,40 @@ class PhotoListViewModel @Inject constructor(
     }
 
     fun setSearchTextListener() {
-        if (!searchEditText.hasObservers()) {
-            disp.add(
-                searchEditText.debounce(300, TimeUnit.MILLISECONDS)
-                    .distinctUntilChanged()
-                    .filter(object : Predicate<String> {
-                        override fun test(t: String): Boolean {
-                            searchText = t
-                            if (t.trim().isEmpty()) {
-                                setEmptySearchTextData()
-                                return false
-                            }
-                            return true
-                        }
-                    })
-                    .switchMapSingle(object : Function<String, Single<ArrayList<Photo>>> {
-                        override fun apply(string: String): Single<ArrayList<Photo>> {
-                            searchText = string
-                            resetList()
-                            return photoListRepository.getPhotos(searchText, pageNo)
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                        }
-                    })
-                    .subscribe({
-                        handleSuccessResult(it)
-                    }, {
-                        handleFailedData(it)
-                    })
-            )
-        }
+        disp.add(
+            searchEditText.debounce(300, TimeUnit.MILLISECONDS)
+                .distinctUntilChanged()
+                .filter(object : Predicate<String> {
+                    override fun test(str: String): Boolean {
+                        return handleSearchTextChange(str)
+                    }
+                })
+                .switchMapSingle(object : Function<String, Single<ArrayList<Photo>>> {
+                    override fun apply(string: String): Single<ArrayList<Photo>> {
+                        searchText = string
+                        resetList()
+                        return photoListRepository.getPhotos(searchText, pageNo)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                    }
+                })
+                .subscribe({
+                    handleSuccessResult(it)
+                }, {
+                    handleFailedData(it)
+                })
+        )
     }
 
-    //=====================================================================================================
+    fun handleSearchTextChange(str: String): Boolean {
+        searchText = str
+        if (str.trim().isEmpty()) {
+            setEmptySearchTextData()
+            return false
+        }
+        return true
+    }
+
     //handle all states
     fun setSuccessData(list: ArrayList<Photo>) {
         stateLiveData.postValue(UserListState.SuccessListState(list))

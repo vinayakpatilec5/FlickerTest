@@ -1,5 +1,6 @@
 package com.example.dunzotest.ui.main
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -50,7 +51,6 @@ class PhotoListActivity : AppCompatActivity(), TextWatcher, LoadingWidget.Callba
         loader = findViewById(R.id.loader)
         paginationLoader = findViewById(R.id.bottom_loader)
         editText = findViewById(R.id.edit_text)
-        viewModel.setSearchTextListener()
     }
 
     fun setListeners() {
@@ -125,7 +125,11 @@ class PhotoListActivity : AppCompatActivity(), TextWatcher, LoadingWidget.Callba
 
     fun setUpRecyclerView() {
         adapter = PhotoAdapter()
-        layoutManager = GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false)
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            layoutManager = GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false)
+        } else {
+            layoutManager = GridLayoutManager(this, 4, GridLayoutManager.VERTICAL, false)
+        }
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter
 
