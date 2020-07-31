@@ -96,6 +96,7 @@ class MainViewModel @Inject constructor(application: Application,var repo: Photo
     fun handleSuccessResult(list:ArrayList<Photo>){
         loading.postValue(false)
         paginationLoading.postValue(false)
+        error.postValue("")
         if(list.size > 0) {
             allPhotoList.addAll(list)
             pageNo++;

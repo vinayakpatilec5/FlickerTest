@@ -82,10 +82,11 @@ class MainActivity : AppCompatActivity(), TextWatcher, LoadingWidget.Callback {
         })
 
         mainViewModel.error.observe(this, Observer {
-            errorText.visibility = View.VISIBLE
-            errorText.text = it
-            adapter.clearData()
-
+            if(!it.isEmpty()) {
+                errorText.visibility = View.VISIBLE
+                errorText.text = it
+                adapter.clearData()
+            }
         })
 
         mainViewModel.paginationError.observe(this, Observer {
