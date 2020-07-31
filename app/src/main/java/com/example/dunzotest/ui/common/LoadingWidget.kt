@@ -9,21 +9,23 @@ import android.widget.TextView
 import com.example.dunzotest.R
 
 class LoadingWidget : FrameLayout {
-    constructor(context: Context) : super(context){
+    constructor(context: Context) : super(context) {
         initViews()
     }
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs){
+
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
         initViews()
     }
+
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
         defStyleAttr
-    ){
+    ) {
         initViews()
     }
 
-    var callback:Callback?=null
+    var callback: Callback? = null
     lateinit var textView: TextView
     lateinit var loader: ProgressBar
 
@@ -37,26 +39,25 @@ class LoadingWidget : FrameLayout {
     }
 
 
-    fun showLoading(){
+    fun showLoading() {
         this.visibility = View.VISIBLE
         loader.visibility = View.VISIBLE
         textView.text = context.getText(R.string.load_next_page)
     }
 
-    fun hideLoading(){
+    fun hideLoading() {
         this.visibility = View.GONE
     }
 
-    fun setRetryMessage(error: String){
+    fun setRetryMessage(error: String) {
         this.visibility = View.VISIBLE
         loader.visibility = View.GONE
         textView.text = "$error\n${context.getText(R.string.tap_to_retry)}"
     }
 
-    interface Callback{
+    interface Callback {
         fun retryNextPageLoad()
     }
-
 
 
 }

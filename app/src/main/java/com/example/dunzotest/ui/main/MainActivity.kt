@@ -1,6 +1,5 @@
 package com.example.dunzotest.ui.main
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,27 +7,27 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.dunzotest.ui.main.adapter.PhotoAdapter
 import com.example.dunzotest.R
-import com.example.dunzotest.model.Photo
 import com.example.dunzotest.ui.common.LoadingWidget
+import com.example.dunzotest.ui.main.adapter.PhotoAdapter
 import com.example.dunzotest.util.CustomApplication
 import com.example.dunzotest.util.ViewModelFactory
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(),TextWatcher,LoadingWidget.Callback {
+class MainActivity : AppCompatActivity(), TextWatcher, LoadingWidget.Callback {
     lateinit var mainViewModel: MainViewModel
     lateinit var adapter: PhotoAdapter
-    lateinit var layoutManager:GridLayoutManager
-    lateinit var recyclerView:RecyclerView
-    lateinit var errorText:TextView
-    lateinit var loader:ProgressBar
-    lateinit var paginationLoader:LoadingWidget
-    lateinit var editText:EditText
+    lateinit var layoutManager: GridLayoutManager
+    lateinit var recyclerView: RecyclerView
+    lateinit var errorText: TextView
+    lateinit var loader: ProgressBar
+    lateinit var paginationLoader: LoadingWidget
+    lateinit var editText: EditText
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -37,7 +36,7 @@ class MainActivity : AppCompatActivity(),TextWatcher,LoadingWidget.Callback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         (application as CustomApplication).component.inject(this)
-        mainViewModel = ViewModelProviders.of(this,viewModelFactory).get(MainViewModel::class.java)
+        mainViewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
         initView()
         setUpRecyclerView()
         setListeners()
@@ -45,8 +44,7 @@ class MainActivity : AppCompatActivity(),TextWatcher,LoadingWidget.Callback {
     }
 
 
-
-    fun initView(){
+    fun initView() {
         recyclerView = findViewById(R.id.recycler_view)
         errorText = findViewById(R.id.error_text)
         loader = findViewById(R.id.loader)
@@ -55,7 +53,7 @@ class MainActivity : AppCompatActivity(),TextWatcher,LoadingWidget.Callback {
         mainViewModel.setSearchTextListener()
     }
 
-    fun setListeners(){
+    fun setListeners() {
         editText.addTextChangedListener(this)
         paginationLoader.callback = this
 
@@ -65,7 +63,7 @@ class MainActivity : AppCompatActivity(),TextWatcher,LoadingWidget.Callback {
             adapter.setData(it)
         })
         mainViewModel.loading.observe(this, Observer {
-            if(it) {
+            if (it) {
                 loader.visibility = View.VISIBLE
                 errorText.visibility = View.GONE
                 adapter.clearData()
@@ -75,7 +73,7 @@ class MainActivity : AppCompatActivity(),TextWatcher,LoadingWidget.Callback {
         })
 
         mainViewModel.paginationLoading.observe(this, Observer {
-            if(it) {
+            if (it) {
                 paginationLoader.showLoading()
                 errorText.visibility = View.GONE
             } else {
@@ -95,21 +93,21 @@ class MainActivity : AppCompatActivity(),TextWatcher,LoadingWidget.Callback {
         })
     }
 
-
-    fun loadData(){
-        if(mainViewModel.allPhotoList.size>0){
+    //on activity started depend on new instance or rotation get data
+    fun loadData() {
+        if (mainViewModel.allPhotoList.size > 0) {
             errorText.visibility = View.GONE
             paginationLoader.hideLoading()
             adapter.setData(mainViewModel.allPhotoList)
-        }else {
-            mainViewModel.loadInitData("")
+        } else {
+            mainViewModel.setEmptySearchTextData()
         }
     }
 
 
-    fun setUpRecyclerView(){
+    fun setUpRecyclerView() {
         adapter = PhotoAdapter()
-        layoutManager = GridLayoutManager(this,2, GridLayoutManager.VERTICAL,false)
+        layoutManager = GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false)
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter
 
@@ -117,8 +115,9 @@ class MainActivity : AppCompatActivity(),TextWatcher,LoadingWidget.Callback {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (!mainViewModel.paginationDone) {
-                    val isLastPosition = layoutManager.findLastCompletelyVisibleItemPosition() == adapter.itemCount - 1
-                    if (mainViewModel.loading.value?.not()?:false && mainViewModel.paginationLoading.value?.not()?:false && isLastPosition) {
+                    val isLastPosition =
+                        layoutManager.findLastCompletelyVisibleItemPosition() == adapter.itemCount - 1
+                    if (mainViewModel.loading.value?.not() ?: false && mainViewModel.paginationLoading.value?.not() ?: false && isLastPosition) {
                         mainViewModel.loadNextPage()
                     }
                 }
@@ -126,8 +125,9 @@ class MainActivity : AppCompatActivity(),TextWatcher,LoadingWidget.Callback {
         })
     }
 
+    //on retry tapped at bottom widget
     override fun retryNextPageLoad() {
-        if (mainViewModel.loading.value?.not()?:false && mainViewModel.paginationLoading.value?.not()?:false) {
+        if (mainViewModel.loading.value?.not() ?: false && mainViewModel.paginationLoading.value?.not() ?: false) {
             mainViewModel.loadNextPage()
         }
     }

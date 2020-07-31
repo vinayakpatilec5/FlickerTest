@@ -8,4 +8,5 @@
     <string name="connection_error">Network Connection Failed</string>
     <string name="load_next_page">Loading next page data...</string>
     <string name="tap_to_retry">Tap here to retry</string>
+    <string name="no_result_found">NO RESULT FOUND</string>
 </resources>

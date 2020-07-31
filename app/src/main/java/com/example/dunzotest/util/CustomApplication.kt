@@ -5,7 +5,7 @@ import com.example.dunzotest.di.DaggerMainComponent
 import com.example.dunzotest.di.MainComponent
 
 class CustomApplication : Application() {
-    lateinit var component:MainComponent
+    lateinit var component: MainComponent
     override fun onCreate() {
         super.onCreate()
         component = DaggerMainComponent.builder().application(this).build()

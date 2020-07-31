@@ -5,8 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.dunzotest.model.Photo
 import com.example.dunzotest.R
+import com.example.dunzotest.model.Photo
 import kotlinx.android.synthetic.main.item_photo.view.*
 
 class PhotoAdapter: RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder>() {
@@ -39,7 +39,8 @@ class PhotoAdapter: RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder>() {
     inner class PhotoViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         fun setData(photo: Photo){
             itemView.title.text = photo.title
-            Glide.with(itemView.context).load(photo.imageUrl).centerCrop().error(R.drawable.placeholder_image).into(itemView.image)
+            Glide.with(itemView.context).load(photo.imageUrl).centerCrop()
+                .error(R.drawable.placeholder_image).into(itemView.image)
         }
     }
 
