@@ -1,4 +1,4 @@
-package com.example.dunzotest.ui.main
+package com.example.dunzotest.ui.photo
 
 import android.content.res.Configuration
 import android.os.Bundle
@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dunzotest.R
 import com.example.dunzotest.ui.common.LoadingWidget
-import com.example.dunzotest.ui.main.adapter.PhotoAdapter
+import com.example.dunzotest.ui.photo.adapter.PhotoAdapter
 import com.example.dunzotest.util.CustomApplication
 import com.example.dunzotest.util.ViewModelFactory
 import javax.inject.Inject
@@ -32,6 +32,19 @@ class PhotoListActivity : AppCompatActivity(), TextWatcher, LoadingWidget.Callba
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
+
+    private val stateObserver = Observer<PhotoListState> { state ->
+        state?.let {
+            when (it) {
+                is PhotoListState.LoadingState -> handleLoadingState(it)
+                is PhotoListState.PaginationLoadingState -> handlePaginationLoadingState(it)
+                is PhotoListState.SuccessListState -> handelSuccessList(it)
+                is PhotoListState.ErrorState -> handleErrorState(it)
+                is PhotoListState.PaginationErrorState -> handlePaginationErrorState(it)
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,27 +69,22 @@ class PhotoListActivity : AppCompatActivity(), TextWatcher, LoadingWidget.Callba
     fun setListeners() {
         editText.addTextChangedListener(this)
         paginationLoader.callback = this
-
-        viewModel.stateLiveData.observe(this, Observer {
-            when (it) {
-                is UserListState.LoadingState -> handleLoadingState(it)
-                is UserListState.PaginationLoadingState -> handlePaginationLoadingState(it)
-                is UserListState.SuccessListState -> handelSuccessList(it)
-                is UserListState.ErrorState -> handleErrorState(it)
-                is UserListState.PaginationErrorState -> handlePaginationErrorState(it)
-            }
-        })
-
+        viewModel.stateLiveData.observe(this, stateObserver)
     }
 
-    fun handelSuccessList(state: UserListState.SuccessListState) {
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.stateLiveData.removeObserver(stateObserver)
+    }
+
+    fun handelSuccessList(state: PhotoListState.SuccessListState) {
         adapter.setData(state.photoList)
         errorText.visibility = View.GONE
         loader.visibility = View.GONE
         paginationLoader.hideLoading()
     }
 
-    fun handleErrorState(state: UserListState.ErrorState) {
+    fun handleErrorState(state: PhotoListState.ErrorState) {
         if (!state.error.isEmpty()) {
             adapter.clearData()
             errorText.visibility = View.VISIBLE
@@ -86,7 +94,7 @@ class PhotoListActivity : AppCompatActivity(), TextWatcher, LoadingWidget.Callba
         }
     }
 
-    fun handlePaginationErrorState(state: UserListState.PaginationErrorState) {
+    fun handlePaginationErrorState(state: PhotoListState.PaginationErrorState) {
         if (!state.error.isEmpty()) {
             errorText.visibility = View.GONE
             loader.visibility = View.VISIBLE
@@ -94,7 +102,7 @@ class PhotoListActivity : AppCompatActivity(), TextWatcher, LoadingWidget.Callba
         }
     }
 
-    fun handleLoadingState(state: UserListState.LoadingState) {
+    fun handleLoadingState(state: PhotoListState.LoadingState) {
         if (state.loading) {
             adapter.clearData()
             errorText.visibility = View.GONE
@@ -103,7 +111,7 @@ class PhotoListActivity : AppCompatActivity(), TextWatcher, LoadingWidget.Callba
         }
     }
 
-    fun handlePaginationLoadingState(state: UserListState.PaginationLoadingState) {
+    fun handlePaginationLoadingState(state: PhotoListState.PaginationLoadingState) {
         if (state.loading) {
             loader.visibility = View.GONE
             errorText.visibility = View.GONE
@@ -114,6 +122,7 @@ class PhotoListActivity : AppCompatActivity(), TextWatcher, LoadingWidget.Callba
     //on activity started depend on new instance or rotation get data
     fun loadData() {
         if (viewModel.allPhotoList.size > 0) {
+            //restore list
             errorText.visibility = View.GONE
             paginationLoader.hideLoading()
             adapter.setData(viewModel.allPhotoList)
@@ -139,7 +148,7 @@ class PhotoListActivity : AppCompatActivity(), TextWatcher, LoadingWidget.Callba
                 if (!viewModel.paginationDone) {
                     val isLastPosition =
                         layoutManager.findLastCompletelyVisibleItemPosition() == adapter.itemCount - 1
-                    if (viewModel.stateLiveData.value is UserListState.SuccessListState && isLastPosition) {
+                    if (viewModel.stateLiveData.value is PhotoListState.SuccessListState && isLastPosition) {
                         viewModel.loadNextPage()
                     }
                 }
@@ -149,7 +158,7 @@ class PhotoListActivity : AppCompatActivity(), TextWatcher, LoadingWidget.Callba
 
     //on retry tapped at bottom widget
     override fun retryNextPageLoad() {
-        if (viewModel.stateLiveData.value is UserListState.SuccessListState) {
+        if (viewModel.stateLiveData.value is PhotoListState.SuccessListState) {
             viewModel.loadNextPage()
         }
     }

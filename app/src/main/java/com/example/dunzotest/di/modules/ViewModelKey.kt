@@ -1,4 +1,4 @@
-package com.example.dunzotest.di
+package com.example.dunzotest.di.modules
 
 import androidx.lifecycle.ViewModel
 import dagger.MapKey

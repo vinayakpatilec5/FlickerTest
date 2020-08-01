@@ -1,4 +1,4 @@
-package com.example.dunzotest.ui.main.adapter
+package com.example.dunzotest.ui.photo.adapter
 
 import android.view.LayoutInflater
 import android.view.View

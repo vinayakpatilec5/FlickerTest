@@ -1,7 +1,7 @@
-package com.example.dunzotest.di
+package com.example.dunzotest.di.modules
 
 import androidx.lifecycle.ViewModel
-import com.example.dunzotest.ui.main.PhotoListViewModel
+import com.example.dunzotest.ui.photo.PhotoListViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap

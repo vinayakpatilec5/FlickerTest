@@ -1,20 +1,16 @@
-package com.example.dunzotest.ui.main.domain
+package com.example.dunzotest.domain.photo
 
-import com.example.dunzotest.api.PhotoApi
 import com.example.dunzotest.model.photo.Photo
+import com.example.dunzotest.model.photo.PhotoListRepository
 import com.example.dunzotest.model.photo.PhotoResponse
 import io.reactivex.Single
 import io.reactivex.functions.Function
 import javax.inject.Inject
 
-
-interface PhotoListRepository {
-    fun getPhotos(searchText: String, pageNo: Int): Single<ArrayList<Photo>>
-}
-
-class PhotoListRepositoryImpl @Inject constructor(var photoApi: PhotoApi) : PhotoListRepository {
+class PhotoListInteractor @Inject constructor(var repository: PhotoListRepository) :
+    PhotoListUseCases {
     override fun getPhotos(searchText: String, pageNo: Int): Single<ArrayList<Photo>> {
-        return photoApi.getPhotos(searchText, pageNo).map(object :
+        return repository.getPhotos(searchText, pageNo).map(object :
             Function<PhotoResponse, ArrayList<Photo>> {
             override fun apply(response: PhotoResponse): ArrayList<Photo>? {
                 return photoListModelMapper(response)
@@ -33,5 +29,4 @@ class PhotoListRepositoryImpl @Inject constructor(var photoApi: PhotoApi) : Phot
         }
         return list
     }
-
 }

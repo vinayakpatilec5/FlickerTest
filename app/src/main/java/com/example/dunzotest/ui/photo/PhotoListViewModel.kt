@@ -1,11 +1,11 @@
-package com.example.dunzotest.ui.main
+package com.example.dunzotest.ui.photo
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.example.dunzotest.R
+import com.example.dunzotest.domain.photo.PhotoListUseCases
 import com.example.dunzotest.model.photo.Photo
-import com.example.dunzotest.ui.main.domain.PhotoListRepository
 import com.example.dunzotest.util.MainUtil
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 class PhotoListViewModel @Inject constructor(
     application: Application,
-    var photoListRepository: PhotoListRepository
+    var pholistUseCases: PhotoListUseCases
 ) :
     AndroidViewModel(application) {
 
@@ -28,7 +28,7 @@ class PhotoListViewModel @Inject constructor(
     var allPhotoList = ArrayList<Photo>()
     var paginationDone: Boolean = false
 
-    var stateLiveData: MutableLiveData<UserListState> = MutableLiveData<UserListState>()
+    var stateLiveData: MutableLiveData<PhotoListState> = MutableLiveData<PhotoListState>()
 
     var searchText: String = ""
     var disp: CompositeDisposable = CompositeDisposable()
@@ -60,7 +60,7 @@ class PhotoListViewModel @Inject constructor(
     fun loadNextPage() {
         setPaginationLoadingState()
         disp.add(
-            photoListRepository.getPhotos(searchText, pageNo)
+            pholistUseCases.getPhotos(searchText, pageNo)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribe({
                     handleSuccessResult(it)
@@ -97,6 +97,7 @@ class PhotoListViewModel @Inject constructor(
                 setPaginationErrorState(MainUtil.getErrorTye(t, getApplication()))
             }
         }
+        setSearchTextListener()
     }
 
     fun setSearchTextListener() {
@@ -112,7 +113,7 @@ class PhotoListViewModel @Inject constructor(
                     override fun apply(string: String): Single<ArrayList<Photo>> {
                         searchText = string
                         resetList()
-                        return photoListRepository.getPhotos(searchText, pageNo)
+                        return pholistUseCases.getPhotos(searchText, pageNo)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                     }
@@ -136,23 +137,23 @@ class PhotoListViewModel @Inject constructor(
 
     //handle all states
     fun setSuccessData(list: ArrayList<Photo>) {
-        stateLiveData.postValue(UserListState.SuccessListState(list))
+        stateLiveData.postValue(PhotoListState.SuccessListState(list))
     }
 
     fun setErrorState(msg: String) {
-        stateLiveData.postValue(UserListState.ErrorState(msg))
+        stateLiveData.postValue(PhotoListState.ErrorState(msg))
     }
 
     fun setLoadingState() {
-        stateLiveData.postValue(UserListState.LoadingState(true))
+        stateLiveData.postValue(PhotoListState.LoadingState(true))
     }
 
     fun setPaginationLoadingState() {
-        stateLiveData.postValue(UserListState.PaginationLoadingState(true))
+        stateLiveData.postValue(PhotoListState.PaginationLoadingState(true))
     }
 
     fun setPaginationErrorState(msg: String) {
-        stateLiveData.postValue(UserListState.PaginationErrorState(msg))
+        stateLiveData.postValue(PhotoListState.PaginationErrorState(msg))
     }
 
 
